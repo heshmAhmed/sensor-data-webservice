@@ -11,7 +11,7 @@
 	<groupId>thirdwayv</groupId>
 	<artifactId>sensordatawebservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SensorDataWebService</name>
+	<name>sensor-data-webservice</name>
 	<description>Thirdwayv task</description>
 	<properties>
 		<java.version>17</java.version>
