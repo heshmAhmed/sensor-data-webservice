@@ -31,7 +31,7 @@ public class SensorDataServiceImp implements SensorDataService {
         log.info("processing hex data {}", hexData);
         List<SensorDataEntity> sensorDataEntities = parseHexDataToSensorDataEntities(hexData);
         sensorDataRepository.saveAll(sensorDataEntities);
-        sendSensorDataSSEEvent(sensorDataRepository.findLatestSensorsData(Pageable.ofSize(10)));
+        sendSensorDataSSEEvent(sensorDataRepository.findLatestSensorsData(Pageable.ofSize(4)));
         log.info("Sensor data processed and stored successfully.");
     }
 
