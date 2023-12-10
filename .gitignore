@@ -52,7 +52,7 @@ atlassian-ide-plugin.xml
 
 cached-antora-playbook.yml
 
-.help.md
+.HELP.md
 mvnw
 mvnw.cmd
 maven-wrapper.jar
