@@ -14,7 +14,7 @@ import java.util.List;
 public interface SensorDataRepository extends JpaRepository<SensorDataEntity, Long> {
     Page<SensorDataEntity> findByDeviceIdOrderByTimestampDesc(String deviceId, Pageable pageable);
 
-    @Query(value = "SELECT new thirdwayv.sensordatawebservice.dto.DeviceSensorDataDTO(deviceId, temperature, max(timestamp))" +
-            " from SensorDataEntity sd Group by deviceId")
-    Page<DeviceSensorDataDTO> findLatestSensorsData(Pageable pageable);
+    @Query(value = "SELECT sd from SensorDataEntity sd where timestamp = (select max(timestamp) from " +
+            "SensorDataEntity sd1 where sd.deviceId = sd1.deviceId)")
+    Page<SensorDataEntity> findLatestSensorsData(Pageable pageable);
 }

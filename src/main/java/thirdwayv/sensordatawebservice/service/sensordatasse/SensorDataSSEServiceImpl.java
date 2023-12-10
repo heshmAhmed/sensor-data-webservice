@@ -24,7 +24,7 @@ public class SensorDataSSEServiceImpl implements SensorDataSSEService {
     }
 
     @Override
-    public void sendSensorsDataEvent(Page<DeviceSensorDataDTO> sensorDataDTOPage) {
+    public void sendSensorsDataToSSEClients(Page<DeviceSensorDataDTO> sensorDataDTOPage) {
 
         List<SseEmitter> deadEmitters = new ArrayList<>();
         this.emitters.forEach(emitter -> {

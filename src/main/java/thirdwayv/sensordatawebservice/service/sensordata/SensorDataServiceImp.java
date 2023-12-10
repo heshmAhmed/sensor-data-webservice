@@ -31,13 +31,19 @@ public class SensorDataServiceImp implements SensorDataService {
         log.info("processing hex data {}", hexData);
         List<SensorDataEntity> sensorDataEntities = parseHexDataToSensorDataEntities(hexData);
         sensorDataRepository.saveAll(sensorDataEntities);
-        sensorDataSSEService.sendSensorsDataEvent(sensorDataRepository.findLatestSensorsData(Pageable.ofSize(10)));
+        sendSensorDataSSEEvent(sensorDataRepository.findLatestSensorsData(Pageable.ofSize(10)));
         log.info("Sensor data processed and stored successfully.");
+    }
+
+    private void sendSensorDataSSEEvent(Page<SensorDataEntity> latestSensorsData) {
+        sensorDataSSEService.sendSensorsDataToSSEClients(latestSensorsData
+                .map(sensorDataEntity -> modelMapper.map(sensorDataEntity, DeviceSensorDataDTO.class)));
     }
 
     @Override
     public Page<DeviceSensorDataDTO> getLatestDevicesSensorsData(Pageable pageable) {
-        return sensorDataRepository.findLatestSensorsData(pageable);
+        return sensorDataRepository.findLatestSensorsData(pageable)
+                .map(sensorDataEntity -> modelMapper.map(sensorDataEntity, DeviceSensorDataDTO.class));
     }
 
     @Override
