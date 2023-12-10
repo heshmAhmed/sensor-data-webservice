@@ -29,25 +29,10 @@ public class SensorDataServiceImp implements SensorDataService {
     @Transactional
     public void processAndStoreDevicesSensorsData(String  hexData) {
         log.info("processing hex data {}", hexData);
-        List<SensorDataEntity> sensorDataEntities = parseHexData(hexData);
+        List<SensorDataEntity> sensorDataEntities = parseHexDataToSensorDataEntities(hexData);
         sensorDataRepository.saveAll(sensorDataEntities);
         sensorDataSSEService.sendSensorsDataEvent(sensorDataRepository.findLatestSensorsData(Pageable.ofSize(10)));
         log.info("Sensor data processed and stored successfully.");
-    }
-
-//    private void sendSensorDataSSEEvent(List<SensorDataEntity> sensorDataEntities) {
-//        List<DeviceSensorDataDTO> deviceSensorDataDTOS = new ArrayList<>();
-//        for (SensorDataEntity sensorDataEntity : sensorDataEntities) {
-//             deviceSensorDataDTOS.add(modelMapper.map(sensorDataEntity, DeviceSensorDataDTO.class));
-//        }
-//        sensorDataSSEService.sendSensorsDataEvent(deviceSensorDataDTOS);
-//        log.info("Sensor data processed and stored successfully.");
-//    }
-
-    @Override
-    public Page<DeviceSensorDataDTO> getDeviceSensorData(String deviceId, Pageable pageable) {
-        Page<SensorDataEntity> sensorDataEntityPage = sensorDataRepository.findByDeviceIdOrderByTimestampDesc(deviceId, pageable);
-       return sensorDataEntityPage.map(sensorDataEntity -> modelMapper.map(sensorDataEntity, DeviceSensorDataDTO.class));
     }
 
     @Override
@@ -55,7 +40,13 @@ public class SensorDataServiceImp implements SensorDataService {
         return sensorDataRepository.findLatestSensorsData(pageable);
     }
 
-    private List<SensorDataEntity> parseHexData(String hexData) {
+    @Override
+    public Page<DeviceSensorDataDTO> getDeviceSensorData(String deviceId, Pageable pageable) {
+        Page<SensorDataEntity> sensorDataEntityPage = sensorDataRepository.findByDeviceIdOrderByTimestampDesc(deviceId, pageable);
+       return sensorDataEntityPage.map(sensorDataEntity -> modelMapper.map(sensorDataEntity, DeviceSensorDataDTO.class));
+    }
+
+    private List<SensorDataEntity> parseHexDataToSensorDataEntities(String hexData) {
         List<SensorDataEntity> sensorDataEntities = new ArrayList<>();
         int numOfSensorData = ((hexData.length() - 2) / 10);
         for (int i = 2; i < hexData.length() && numOfSensorData > 0; i += 10, numOfSensorData--) {
